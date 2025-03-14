@@ -2,7 +2,10 @@ module github.com/Kishan-Thanki/discord-ping
 
 go 1.23.4
 
-require github.com/bwmarrin/discordgo v0.28.1
+require (
+	github.com/bwmarrin/discordgo v0.28.1
+	github.com/joho/godotenv v1.5.1
+)
 
 require (
 	github.com/gorilla/websocket v1.4.2 // indirect

@@ -8,7 +8,6 @@ import (
 )
 
 var BotID string
-var goBot *discordgo.Session
 
 func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == BotID {
@@ -21,15 +20,20 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func Start() {
+	if config.Token == "" {
+		fmt.Println("Error: DISCORD_BOT_TOKEN is missing. Set it in your environment variables.")
+		return
+	}
+
 	goBot, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("Error creating bot session:", err)
 		return
 	}
 
 	u, err := goBot.User("@me")
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("Error getting bot user:", err)
 		return
 	}
 
@@ -38,7 +42,7 @@ func Start() {
 
 	err = goBot.Open()
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("Error opening connection:", err)
 		return
 	}
 

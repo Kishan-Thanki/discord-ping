@@ -1,42 +1,33 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
-type configStruct struct {
-	Token     string `json:"Token"`
-	BotPrefix string `json:"BotPrefix"`
+func ReadConfig() error {
+	fmt.Println("Reading .env file...")
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("Error loading .env file:", err)
+		return err
+	}
+
+	Token = os.Getenv("TOKEN")
+	BotPrefix = os.Getenv("BOT_PREFIX")
+
+	if Token == "" || BotPrefix == "" {
+		return fmt.Errorf("missing required environment variables")
+	}
+
+	fmt.Println("Config loaded successfully!")
+	return nil
 }
 
 var (
 	Token     string
 	BotPrefix string
-
-	config *configStruct
 )
-
-func ReadConfig() error {
-	fmt.Println("Reading config file...")
-
-	file, err := os.ReadFile("./config.json")
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-
-	fmt.Println(string(file))
-
-	err = json.Unmarshal(file, &config)
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-
-	Token = config.Token
-	BotPrefix = config.BotPrefix
-
-	return nil
-}
