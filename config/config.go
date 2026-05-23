@@ -1,33 +1,25 @@
 package config
 
 import (
-	"fmt"
+	"errors"
+	"log/slog"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 func ReadConfig() error {
-	fmt.Println("Reading .env file...")
-
-	err := godotenv.Load(".env")
-	if err != nil {
-		fmt.Println("Error loading .env file:", err)
-		return err
-	}
-
 	Token = os.Getenv("TOKEN")
 	BotPrefix = os.Getenv("BOT_PREFIX")
 
 	if Token == "" || BotPrefix == "" {
-		return fmt.Errorf("missing required environment variables")
+		return errors.New("missing required environment variables (TOKEN, BOT_PREFIX)")
 	}
 
-	fmt.Println("Config loaded successfully!")
+	slog.Info("Config loaded successfully")
 	return nil
 }
 
 var (
 	Token     string
 	BotPrefix string
+	Version   = "v1.0.0"
 )

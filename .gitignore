@@ -23,3 +23,12 @@ go.work.sum
 
 # env file
 .env
+
+# Bot binaries
+ping-bot
+discord-ping
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal

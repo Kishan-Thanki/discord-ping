@@ -1,50 +1,87 @@
 package bot
 
 import (
-	"fmt"
+	"log/slog"
+	"time"
 
 	"github.com/Kishan-Thanki/discord-ping/config"
+	"github.com/Kishan-Thanki/discord-ping/database"
 	"github.com/bwmarrin/discordgo"
 )
 
-var BotID string
+var (
+	BotID     string
+	goBot     *discordgo.Session
+	startTime time.Time
+)
 
-func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == BotID {
-		return
-	}
-
-	if m.Content == "ping" {
-		_, _ = s.ChannelMessageSend(m.ChannelID, "pong")
-	}
+var slashCommands = []*discordgo.ApplicationCommand{
+	{
+		Name:        "ping",
+		Description: "Replies with pong and network latency",
+	},
 }
 
 func Start() {
-	if config.Token == "" {
-		fmt.Println("Error: DISCORD_BOT_TOKEN is missing. Set it in your environment variables.")
+	var err error
+	startTime = time.Now()
+
+	err = database.InitDB("bot.db")
+	if err != nil {
+		slog.Error("Failed to initialize database", "error", err)
 		return
 	}
 
-	goBot, err := discordgo.New("Bot " + config.Token)
+	_ = InitFonts()
+
+	goBot, err = discordgo.New("Bot " + config.Token)
 	if err != nil {
-		fmt.Println("Error creating bot session:", err)
+		slog.Error("Failed to create bot session", "error", err)
 		return
 	}
 
 	u, err := goBot.User("@me")
 	if err != nil {
-		fmt.Println("Error getting bot user:", err)
+		slog.Error("Failed to get bot user", "error", err)
 		return
 	}
 
 	BotID = u.ID
+
+	goBot.Identify.Intents = discordgo.IntentsGuildMessages |
+		discordgo.IntentsDirectMessages |
+		discordgo.IntentsMessageContent |
+		discordgo.IntentsGuildMembers |
+		discordgo.IntentsGuilds
+
 	goBot.AddHandler(messageHandler)
+	goBot.AddHandler(slashCommandHandler)
+	goBot.AddHandler(welcomeHandler)
 
 	err = goBot.Open()
 	if err != nil {
-		fmt.Println("Error opening connection:", err)
+		slog.Error("Failed to open connection", "error", err)
 		return
 	}
 
-	fmt.Println("Bot is running!")
+	LoadReminders(goBot)
+
+	_ = goBot.UpdateListeningStatus(config.BotPrefix + "ping")
+
+	for _, cmd := range slashCommands {
+		_, err := goBot.ApplicationCommandCreate(goBot.State.User.ID, "", cmd)
+		if err != nil {
+			slog.Error("Failed to register slash command", "command", cmd.Name, "error", err)
+		}
+	}
+
+	slog.Info("Bot is running", "user", u.Username, "id", u.ID)
+}
+
+func Stop() {
+	if goBot != nil {
+		slog.Info("Shutting down bot gracefully")
+		goBot.Close()
+	}
+	database.CloseDB()
 }

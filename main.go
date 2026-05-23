@@ -1,7 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Kishan-Thanki/discord-ping/bot"
 	"github.com/Kishan-Thanki/discord-ping/config"
@@ -9,18 +12,29 @@ import (
 )
 
 func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}))
+	slog.SetDefault(logger)
+
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Warning: .env file not found. Ensure environment variables are set.")
+		slog.Warn("No .env file found, ensure environment variables are set")
 	}
 
 	err = config.ReadConfig()
 	if err != nil {
-		fmt.Println("Error reading config:", err)
+		slog.Error("Failed to read config", "error", err)
 		return
 	}
 
+	slog.Info("Starting go-discord-ping", "version", config.Version)
 	bot.Start()
 
-	<-make(chan struct{})
+	slog.Info("Press CTRL-C to exit")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-sc
+
+	bot.Stop()
 }

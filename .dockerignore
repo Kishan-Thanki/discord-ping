@@ -1,0 +1,11 @@
+.git
+.env
+*.exe
+*.dll
+*.so
+*.dylib
+discord-ping
+.gitignore
+README.md
+PRIVACY_POLICY.md
+TERMS_OF_SERVICE.md
