@@ -20,7 +20,6 @@ func TestUserCRUD(t *testing.T) {
 	userID := "123"
 	guildID := "456"
 
-	// 1. Get User (should create if not exists)
 	u, err := GetUser(userID, guildID)
 	if err != nil {
 		t.Fatalf("GetUser failed: %v", err)
@@ -29,7 +28,6 @@ func TestUserCRUD(t *testing.T) {
 		t.Errorf("Expected new user to have 0 stats, got XP: %d, Level: %d, Balance: %d", u.XP, u.Level, u.Balance)
 	}
 
-	// 2. Update XP
 	err = UpdateUserXP(userID, guildID, 150, 1)
 	if err != nil {
 		t.Fatalf("UpdateUserXP failed: %v", err)
@@ -40,7 +38,6 @@ func TestUserCRUD(t *testing.T) {
 		t.Errorf("XP update failed. Expected 150/1, got %d/%d", u.XP, u.Level)
 	}
 
-	// 3. Update Balance
 	err = UpdateUserBalance(userID, guildID, 500)
 	if err != nil {
 		t.Fatalf("UpdateUserBalance failed: %v", err)
@@ -51,7 +48,6 @@ func TestUserCRUD(t *testing.T) {
 		t.Errorf("Balance update failed. Expected 500, got %d", u.Balance)
 	}
 
-	// 4. Update Daily
 	nowStr := time.Now().Format(time.RFC3339)
 	err = UpdateUserDaily(userID, guildID, 600, nowStr)
 	if err != nil {
@@ -71,8 +67,6 @@ func TestLeaderboard(t *testing.T) {
 	UpdateUserXP("user2", guildID, 300, 3)
 	UpdateUserXP("user3", guildID, 200, 2)
 
-	// Update without GetUser first in this test, must ensure they exist.
-	// Actually UpdateUserXP doesn't insert if not exists. Let's call GetUser to create them.
 	GetUser("user1", guildID)
 	GetUser("user2", guildID)
 	GetUser("user3", guildID)
@@ -98,7 +92,6 @@ func TestLeaderboard(t *testing.T) {
 func TestPrefix(t *testing.T) {
 	guildID := "prefix_test"
 
-	// Default should be !
 	p, err := GetPrefix(guildID)
 	if err != nil {
 		t.Fatalf("GetPrefix failed: %v", err)
@@ -107,7 +100,6 @@ func TestPrefix(t *testing.T) {
 		t.Errorf("Expected default prefix '!', got '%s'", p)
 	}
 
-	// Set custom
 	err = SetPrefix(guildID, "?")
 	if err != nil {
 		t.Fatalf("SetPrefix failed: %v", err)
@@ -118,7 +110,6 @@ func TestPrefix(t *testing.T) {
 		t.Errorf("Expected prefix '?', got '%s'", p)
 	}
 
-	// Update existing
 	err = SetPrefix(guildID, "$")
 	if err != nil {
 		t.Fatalf("SetPrefix failed: %v", err)

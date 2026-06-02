@@ -6,6 +6,12 @@ import (
 	"os"
 )
 
+var (
+	Token     string
+	BotPrefix string
+	Version   = "v1.0.0"
+)
+
 func ReadConfig() error {
 	Token = os.Getenv("TOKEN")
 	BotPrefix = os.Getenv("BOT_PREFIX")
@@ -17,9 +23,3 @@ func ReadConfig() error {
 	slog.Info("Config loaded successfully")
 	return nil
 }
-
-var (
-	Token     string
-	BotPrefix string
-	Version   = "v1.0.0"
-)
