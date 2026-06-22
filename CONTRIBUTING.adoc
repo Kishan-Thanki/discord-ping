@@ -55,13 +55,13 @@ for _, user := range users {
 
 === 2. Database Interactions
 
-* Do not modify the `PRAGMA` settings in `database/db.go`. The bot relies heavily on SQLite `WAL` mode.
-* Always use *Prepared Statements* (`sql.Stmt`) to prevent SQL Injection. Do not manually format SQL strings.
+* Do not modify the `PRAGMA` settings in `internal/database/db.go`. The bot relies heavily on SQLite `WAL` mode.
+* Always use *Prepared Statements* (`sql.Stmt`) to prevent SQL Injection. Do not manually format SQL strings. All statements live as fields on the `Repository` struct.
 
 === 3. Goroutines & State
 
 * If a command relies on asynchronous wait times (like `!remind`), use `time.AfterFunc` rather than blocking `time.Sleep`.
-* Use `sync.Map` or `sync.Mutex` when interacting with global state to prevent race conditions during high traffic.
+* Use `sync.Map` or `sync.Mutex` when interacting with shared state on the `Bot` struct to prevent race conditions during high traffic.
 
 == Pull Request Process
 

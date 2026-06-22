@@ -6,12 +6,12 @@ all: lint build
 # Build the binary
 build:
 	@echo "Building..."
-	@go build -o ping-bot main.go
+	@go build -o ping-bot cmd/discord-ping/main.go
 
 # Run the bot
 run:
 	@echo "Running..."
-	@go run main.go
+	@go run cmd/discord-ping/main.go
 
 # Run tests
 test:

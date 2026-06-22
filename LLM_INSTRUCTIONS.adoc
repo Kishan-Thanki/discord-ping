@@ -1,0 +1,33 @@
+= LLM Instructions for go-discord-ping
+
+If you are an LLM assistant (LLM) analyzing or writing code for this repository, you *MUST* adhere to the following rules to maintain the architectural integrity and extreme performance focus of this project.
+
+== 1. Project Philosophy
+This is a hyper-optimized, zero-allocation Discord utility bot built in Go. It prioritizes low-latency execution and minimal garbage collection (GC) pauses above developer convenience.
+
+== 2. Zero-Allocation Rules
+* *Prohibited*: Avoid using `fmt.Sprintf` or reflection-based formatting whenever possible, especially in hot paths (like message handlers).
+* *Required*: Use direct string concatenation (`+`) and the `strconv` package (`strconv.Itoa`, `strconv.FormatInt`, etc.) for type conversions.
+* *Why*: This minimizes memory allocations and reduces GC pressure during high-concurrency event handling.
+
+== 3. Database Constraints
+* *Driver*: The project strictly uses `modernc.org/sqlite`. Do *NOT* introduce `mattn/go-sqlite3` or any other CGo-dependent database drivers. The bot must remain easy to cross-compile.
+* *Prepared Statements ONLY*: Do not execute raw `DB.Exec` or `DB.Query` strings inside the `internal/bot/` package or application logic.
+* *Enforcement*: All database queries MUST be implemented as pre-compiled `sql.Stmt` fields on the `Repository` struct in `internal/database/db.go`, initialized during the `NewRepository` constructor. Your role is to create a new method on `Repository` that executes the prepared statement, and then call that method via the `Store` interface from the `internal/bot/` package.
+* *WAL Mode*: Be aware the DB runs in WAL (Write-Ahead Logging) mode with specific pragmas for speed.
+
+== 4. Architectural Boundaries
+* *`cmd/discord-ping/main.go`*: Strictly for initialization (logging, config, DI wiring) and graceful shutdown (OS signal listening). Do not put application logic here.
+* *`internal/bot/` Package*: Only for Discordgo handlers, event processing, and routing. Do not put raw SQL here. The bot depends on a `Store` interface (defined in `internal/bot/store.go`), NOT on the concrete `*database.Repository`.
+* *`internal/database/` Package*: Only for SQLite persistence. Do not import `discordgo` into this package.
+* *`internal/config/` Package*: Configuration is loaded via `config.Load()` which returns a typed `*Config` struct. There are NO package-level global variables.
+* *Logging*: Use the standard library `log/slog`. Do not use the older `log` package or external logging libraries.
+
+== 5. Adding New Features
+If adding a new command (e.g., a new minigame or utility):
+. Create the handler logic in a new file (or an appropriate existing one like `commands.go` or `fun.go`) inside the `internal/bot/` package.
+. If it requires persistence, add the necessary `CREATE TABLE` query and prepared statement as a new field on `Repository` in `internal/database/db.go` first. Then add the corresponding method to the `Store` interface in `internal/bot/store.go`.
+. If it requires a slash command, register it in the `slashCommands` array in `internal/bot/bot.go`.
+. All mutable state (game sessions, rate limits, caches) MUST be fields on the `Bot` struct — never package-level variables.
+
+Read the `README.adoc` and `COMMANDS.adoc` for further context on existing user-facing features.

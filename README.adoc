@@ -32,7 +32,7 @@ This project relies on the following external libraries:
 
 == Setup & Running
 
-. Ensure you have Go installed (v1.23.4 or higher).
+. Ensure you have Go installed (v1.26 or higher).
 . Create a `.env` file in the root directory and add your bot token and default prefix:
 +
 [source,env]
@@ -46,14 +46,14 @@ BOT_PREFIX=!
 +
 [source,bash]
 ----
-go run main.go
+make run
 ----
 
 . Or build the optimized binary:
 +
 [source,bash]
 ----
-go build -o ping-bot .
+make build
 ./ping-bot
 ----
 
