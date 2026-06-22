@@ -6,7 +6,7 @@ all: lint build
 # Build the binary
 build:
 	@echo "Building..."
-	@go build -o ping-bot cmd/discord-ping/main.go
+	@go build -o discord-ping ./cmd/discord-ping/main.go
 
 # Run the bot
 run:
@@ -33,5 +33,5 @@ pre-check:
 # Clean build cache and binary
 clean:
 	@echo "Cleaning..."
-	@rm -f ping-bot
+	@rm -f discord-ping
 	@go clean
