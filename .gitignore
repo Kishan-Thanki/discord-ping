@@ -25,8 +25,8 @@ go.work.sum
 .env
 
 # Bot binaries
-ping-bot
-discord-ping
+/ping-bot
+/discord-ping
 
 # SQLite databases
 *.db
