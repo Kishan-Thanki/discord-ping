@@ -4,15 +4,14 @@ import (
 	"context"
 	"time"
 
-	"github.com/Kishan-Thanki/discord-ping/internal/database"
+	"discord-ping/internal/database"
 )
 
 // Store defines the data operations that the Bot depends on.
 // The bot package does NOT need to know about SQL, prepared statements,
 // or connection pools. It only cares about these behaviors.
 //
-// This is the Consumer-Defined Interface pattern from
-// 04-architecture/03-consumer-interfaces in the reference repository.
+// This is the Consumer-Defined Interface pattern.
 type Store interface {
 	GetUser(ctx context.Context, userID, guildID string) (*database.User, error)
 	UpdateUserXP(ctx context.Context, userID, guildID string, xp, level int) error

@@ -7,7 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Kishan-Thanki/discord-ping/internal/config"
+	"discord-ping/internal/config"
+
 	"github.com/bwmarrin/discordgo"
 	"golang.org/x/image/font"
 )
@@ -21,19 +22,16 @@ type Bot struct {
 	BotID     string
 	startTime time.Time
 
-	// Game state — moved from package-level globals onto the struct
 	blackjackGames sync.Map
 	wordleGames    sync.Map
 	triviaActive   sync.Map
 	rateLimits     sync.Map
 
-	// Fonts for welcome images
 	fontFace48 font.Face
 	fontFace32 font.Face
 }
 
 // NewBot constructs a Bot with its injected dependencies.
-// This is the Dependency Injection pattern from 04-architecture/02-dependency-injection.
 func NewBot(cfg *config.Config, store Store) *Bot {
 	return &Bot{
 		cfg:   cfg,

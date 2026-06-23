@@ -77,12 +77,15 @@ func (b *Bot) cmdPoll(s *discordgo.Session, m *discordgo.MessageCreate, args []s
 	question := parsed[0]
 	options := parsed[1:]
 
-	desc := ""
+	var desc strings.Builder
 	for i, opt := range options {
-		desc += pollEmojis[i] + " " + opt + "\n"
+		desc.WriteString(pollEmojis[i])
+		desc.WriteString(" ")
+		desc.WriteString(opt)
+		desc.WriteString("\n")
 	}
 
-	embed := newEmbed("📊 Poll: "+question, desc)
+	embed := newEmbed("📊 Poll: "+question, desc.String())
 	embed.Author = &discordgo.MessageEmbedAuthor{
 		Name:    m.Author.Username,
 		IconURL: m.Author.AvatarURL("256"),
@@ -152,18 +155,22 @@ func (b *Bot) cmdTrivia(s *discordgo.Session, m *discordgo.MessageCreate) {
 	})
 
 	correctIdx := 0
-	desc := ""
+	var desc strings.Builder
 	for i, opt := range options {
 		if opt == correct {
 			correctIdx = i
 		}
-		desc += "**" + strconv.Itoa(i+1) + ".** " + opt + "\n"
+		desc.WriteString("**")
+		desc.WriteString(strconv.Itoa(i + 1))
+		desc.WriteString(".** ")
+		desc.WriteString(opt)
+		desc.WriteString("\n")
 	}
 
 	titleCaser := cases.Title(language.English)
 
 	embed := newEmbed("🧠 Trivia Time!", question)
-	embed.Description = desc
+	embed.Description = desc.String()
 	embed.Footer = &discordgo.MessageEmbedFooter{Text: "Category: " + html.UnescapeString(q.Category) + " | Difficulty: " + titleCaser.String(q.Difficulty)}
 
 	SendEmbed(s, m.ChannelID, embed)

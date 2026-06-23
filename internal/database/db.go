@@ -8,8 +8,8 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-// Repository encapsulates all database access. Every piece of state —
-// the connection AND the prepared statements — lives on this struct.
+// Repository encapsulates all database access.
+// Every piece of state — the connection AND the prepared statements — lives on this struct.
 // There are ZERO package-level variables.
 type Repository struct {
 	db *sql.DB
@@ -125,4 +125,3 @@ func (r *Repository) createTables(ctx context.Context) error {
 	}
 	return nil
 }
-

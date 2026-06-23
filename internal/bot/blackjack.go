@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/rand"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -171,30 +172,33 @@ func renderBlackjackBoard(game *BlackjackGame, gameOver bool) *discordgo.Message
 	playerTotal := calculateHand(game.PlayerHand)
 	dealerTotal := calculateHand(game.DealerHand)
 
-	playerStr := ""
+	var playerStr strings.Builder
 	for _, c := range game.PlayerHand {
-		playerStr += c.String() + " "
+		playerStr.WriteString(c.String())
+		playerStr.WriteString(" ")
 	}
 
-	dealerStr := ""
+	var dealerStr strings.Builder
 	if gameOver {
 		for _, c := range game.DealerHand {
-			dealerStr += c.String() + " "
+			dealerStr.WriteString(c.String())
+			dealerStr.WriteString(" ")
 		}
 	} else {
-		dealerStr = game.DealerHand[0].String() + " ❓"
+		dealerStr.WriteString(game.DealerHand[0].String())
+		dealerStr.WriteString(" ❓")
 	}
 
 	embed := newEmbed("🃏 Blackjack", "Bet: **"+strconv.Itoa(game.Bet)+" coins**")
 
 	embed.Fields = []*discordgo.MessageEmbedField{
-		{Name: "Your Hand (" + strconv.Itoa(playerTotal) + ")", Value: playerStr, Inline: true},
+		{Name: "Your Hand (" + strconv.Itoa(playerTotal) + ")", Value: playerStr.String(), Inline: true},
 	}
 
 	if gameOver {
-		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{Name: "Dealer Hand (" + strconv.Itoa(dealerTotal) + ")", Value: dealerStr, Inline: true})
+		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{Name: "Dealer Hand (" + strconv.Itoa(dealerTotal) + ")", Value: dealerStr.String(), Inline: true})
 	} else {
-		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{Name: "Dealer Hand", Value: dealerStr, Inline: true})
+		embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{Name: "Dealer Hand", Value: dealerStr.String(), Inline: true})
 	}
 
 	return embed

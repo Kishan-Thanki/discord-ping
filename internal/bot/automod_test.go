@@ -11,12 +11,12 @@ func TestBadWordsRegex(t *testing.T) {
 	}{
 		// Clean messages
 		{"Hello world!", false},
-		{"Can I get some free nitr0?", false}, // Typo, doesn't match exactly
+		{"Can I get some free nitr0?", false},
 		{"I am having a fantastic day", false},
 
 		// Bad words
 		{"You are a bitch", true},
-		{"fUck off", true}, // Case insensitive
+		{"fUck off", true},
 		{"this is shit", true},
 		{"asshole", true},
 		{"Kill yourself KYS now", true},

@@ -82,15 +82,18 @@ func (b *Bot) cmdGuess(s *discordgo.Session, m *discordgo.MessageCreate, args []
 
 	game.Guesses = append(game.Guesses, guess)
 
-	boardDesc := ""
+	var boardDesc strings.Builder
 	won := false
 
 	for _, g := range game.Guesses {
-		boardDesc += renderWordleGuess(g, game.TargetWord) + "  " + g + "\n"
+		boardDesc.WriteString(renderWordleGuess(g, game.TargetWord))
+		boardDesc.WriteString("  ")
+		boardDesc.WriteString(g)
+		boardDesc.WriteString("\n")
 	}
 
 	for i := len(game.Guesses); i < 6; i++ {
-		boardDesc += "⬜ ⬜ ⬜ ⬜ ⬜\n"
+		boardDesc.WriteString("⬜ ⬜ ⬜ ⬜ ⬜\n")
 	}
 
 	if guess == game.TargetWord {
@@ -100,7 +103,7 @@ func (b *Bot) cmdGuess(s *discordgo.Session, m *discordgo.MessageCreate, args []
 		game.Finished = true
 	}
 
-	embed := newEmbed("🟩 Discord Wordle", boardDesc)
+	embed := newEmbed("🟩 Discord Wordle", boardDesc.String())
 
 	if game.Finished {
 		b.wordleGames.Delete(m.Author.ID)

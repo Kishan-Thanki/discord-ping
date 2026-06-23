@@ -18,10 +18,10 @@ func (b *Bot) messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	prefix := "!"
+	prefix := b.cfg.BotPrefix
 	if m.GuildID != "" {
 		p, err := b.store.GetPrefix(context.Background(), m.GuildID)
-		if err == nil {
+		if err == nil && p != "" {
 			prefix = p
 		}
 	}

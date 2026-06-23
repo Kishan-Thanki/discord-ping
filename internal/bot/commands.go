@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Kishan-Thanki/discord-ping/internal/config"
+	"discord-ping/internal/config"
 	"github.com/bwmarrin/discordgo"
 )
 

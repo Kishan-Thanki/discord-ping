@@ -6,7 +6,6 @@ import (
 	"os"
 )
 
-// Version is the application version. It is a constant because it never changes at runtime.
 const Version = "v1.0.0"
 
 // Config represents the single source of truth for the bot's environment.
@@ -16,8 +15,6 @@ type Config struct {
 	BotPrefix string
 }
 
-// Load reads from environment variables and constructs the typed Config struct.
-// It fails fast if required variables are missing.
 func Load() (*Config, error) {
 	token := os.Getenv("TOKEN")
 	if token == "" {

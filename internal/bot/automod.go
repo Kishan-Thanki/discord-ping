@@ -18,10 +18,8 @@ func (b *Bot) checkBadWords(s *discordgo.Session, m *discordgo.MessageCreate) bo
 	}
 
 	if badWordsRegex.MatchString(m.Content) {
-		// Delete the message
 		_ = s.ChannelMessageDelete(m.ChannelID, m.ID)
 
-		// Warn the user
 		b.applyWarning(s, m.GuildID, m.ChannelID, m.Author.ID, "Triggered auto-mod filter (bad words/spam)")
 		return true
 	}
@@ -95,7 +93,6 @@ func (b *Bot) applyWarning(s *discordgo.Session, guildID, channelID, targetID, r
 	embed := newEmbed("⚠️ Warning Issued", "<@"+targetID+"> has been warned.\n**Reason:** "+reason+"\n**Total Warnings:** "+strconv.Itoa(count)+"/3")
 	SendEmbed(s, channelID, embed)
 
-	// Escalation: 3 warnings = 10 minute timeout
 	if count >= 3 {
 		timeoutUntil := time.Now().Add(10 * time.Minute)
 		err = s.GuildMemberTimeout(guildID, targetID, &timeoutUntil)

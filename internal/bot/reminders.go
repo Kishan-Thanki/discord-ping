@@ -19,10 +19,8 @@ func (b *Bot) LoadReminders(s *discordgo.Session) {
 	for _, r := range reminders {
 		delay := time.Until(r.RemindAt)
 		if delay <= 0 {
-			// Reminder is past due, fire immediately
 			b.fireReminder(s, r.ID, r.UserID, r.Message)
 		} else {
-			// Schedule it
 			b.scheduleReminder(s, r.ID, r.UserID, r.Message, delay)
 		}
 	}
