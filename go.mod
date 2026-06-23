@@ -6,7 +6,6 @@ require (
 	github.com/bwmarrin/discordgo v0.29.0
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/joho/godotenv v1.5.1
 	golang.org/x/image v0.43.0
 	golang.org/x/text v0.38.0
 	modernc.org/sqlite v1.53.0

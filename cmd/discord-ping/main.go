@@ -9,7 +9,6 @@ import (
 	"github.com/Kishan-Thanki/discord-ping/internal/bot"
 	"github.com/Kishan-Thanki/discord-ping/internal/config"
 	"github.com/Kishan-Thanki/discord-ping/internal/database"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -17,11 +16,6 @@ func main() {
 		Level: slog.LevelInfo,
 	}))
 	slog.SetDefault(logger)
-
-	err := godotenv.Load()
-	if err != nil {
-		slog.Warn("No .env file found, ensure environment variables are set")
-	}
 
 	cfg, err := config.Load()
 	if err != nil {

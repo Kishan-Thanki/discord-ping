@@ -11,7 +11,7 @@ build:
 # Run the bot
 run:
 	@echo "Running..."
-	@go run cmd/discord-ping/main.go
+	@export $$(cat .env | xargs) && go run cmd/discord-ping/main.go
 
 # Run tests
 test:
