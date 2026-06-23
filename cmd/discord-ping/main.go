@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Kishan-Thanki/discord-ping/internal/bot"
-	"github.com/Kishan-Thanki/discord-ping/internal/config"
-	"github.com/Kishan-Thanki/discord-ping/internal/database"
+	"discord-ping/internal/bot"
+	"discord-ping/internal/config"
+	"discord-ping/internal/database"
 )
 
 func main() {

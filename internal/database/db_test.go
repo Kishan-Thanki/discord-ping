@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"os"
 	"testing"
 	"time"
@@ -96,11 +97,11 @@ func TestPrefix(t *testing.T) {
 	guildID := "prefix_test"
 
 	p, err := repo.GetPrefix(ctx, guildID)
-	if err != nil {
-		t.Fatalf("GetPrefix failed: %v", err)
+	if err != sql.ErrNoRows {
+		t.Fatalf("Expected ErrNoRows for new guild, got: %v", err)
 	}
-	if p != "!" {
-		t.Errorf("Expected default prefix '!', got '%s'", p)
+	if p != "" {
+		t.Errorf("Expected empty prefix, got '%s'", p)
 	}
 
 	err = repo.SetPrefix(ctx, guildID, "?")

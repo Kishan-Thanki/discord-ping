@@ -16,15 +16,15 @@ echo "Running Pre-Check (Lint, Vet, and Test)..."
 make pre-check
 
 if [ $? -ne 0 ]; then
-  echo "❌ Pre-check failed! Push aborted."
+  echo "Pre-check failed! Push aborted."
   echo "Please fix the errors above and try pushing again."
   exit 1
 fi
 
-echo "✅ Pre-check passed! Pushing to GitHub..."
+echo "Pre-check passed! Pushing to GitHub..."
 exit 0
 EOF
 
 chmod +x "$HOOK_FILE"
 
-echo "✅ Git pre-push hook installed successfully!"
+echo "Git pre-push hook installed successfully!"

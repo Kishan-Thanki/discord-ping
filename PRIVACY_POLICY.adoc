@@ -11,10 +11,11 @@ To provide its functionality, the Bot stores the following data in its local dat
 * *Discord User IDs*: To track economy balances, XP, levels, and warnings.
 * *Discord Guild (Server) IDs*: To isolate your economy and stats to specific servers, and to save server-specific configurations (like custom prefixes).
 * *Discord Channel IDs*: Used exclusively for scheduling and delivering reminders (`!remind`).
+* *Command Text Snippets*: The explicit text you provide when creating a reminder (`!remind`) or issuing a warning (`!warn`) is stored in the database to deliver the feature.
 
 == 2. Data We DO NOT Collect
 
-* *Message Content*: The Bot does NOT log, store, or save the content of your chat messages. It only reads messages in real-time in memory to check for commands (like `!ping`) or auto-mod triggers, after which the text is immediately discarded.
+* *Message Content*: The Bot does NOT mass-log or save the content of your general chat messages. It only reads messages in real-time in memory to check for commands or auto-mod triggers, after which the text is immediately discarded. _(Exception: Text explicitly provided as the message of a `!remind` or `!warn` command is saved to the database)._
 * *Personal Identifiable Information (PII)*: We do not ask for, collect, or store real names, email addresses, passwords, or IP addresses.
 
 == 3. How Data is Used

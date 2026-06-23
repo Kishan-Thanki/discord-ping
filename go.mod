@@ -1,4 +1,4 @@
-module github.com/Kishan-Thanki/discord-ping
+module discord-ping
 
 go 1.26.4
 
