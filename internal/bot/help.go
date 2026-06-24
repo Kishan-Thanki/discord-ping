@@ -22,13 +22,9 @@ func (b *Bot) cmdHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
 		Name string
 		Cmds []string
 	}{
-		{"General", []string{"ping", "version", "uptime", "serverinfo", "avatar [@user]"}},
-		{"Fun", []string{"8ball [question]", "coinflip", "poll \"Q\" \"A\" \"B\"", "trivia"}},
-		{"Leveling", []string{"rank", "leaderboard"}},
-		{"Economy", []string{"daily", "balance [@user]", "give @user [amount]"}},
-		{"Casino/Games", []string{"slots [bet]", "blackjack [bet]", "wordle", "guess [word]"}},
-		{"Utility", []string{"remind [duration] [message]", "help"}},
-		{"Admin/Mod", []string{"setprefix [new]", "warn @user [reason]", "warnings @user", "kick @user [reason]", "ban @user [reason]", "mute @user"}},
+		{"Diagnostics", []string{"ping", "version", "uptime"}},
+		{"Utility", []string{"help"}},
+		{"Admin", []string{"setprefix [new]"}},
 	}
 
 	for _, cat := range categories {

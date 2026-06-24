@@ -37,3 +37,15 @@ func EditComplex(s *discordgo.Session, data *discordgo.MessageEdit) {
 		slog.Error("Failed to edit complex message", "channel_id", data.Channel, "message_id", data.ID, "error", err)
 	}
 }
+
+// hasPermission checks if a user has a specific permission in a channel.
+func hasPermission(s *discordgo.Session, userID, channelID string, permission int64) bool {
+	perms, err := s.State.UserChannelPermissions(userID, channelID)
+	if err != nil {
+		perms, err = s.UserChannelPermissions(userID, channelID)
+		if err != nil {
+			return false
+		}
+	}
+	return perms&permission == permission
+}

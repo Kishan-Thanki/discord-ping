@@ -10,8 +10,14 @@ import (
 	"discord-ping/internal/config"
 
 	"github.com/bwmarrin/discordgo"
-	"golang.org/x/image/font"
 )
+
+// Store defines the data layer interface required by the bot.
+type Store interface {
+	GetPrefix(ctx context.Context, guildID string) (string, error)
+	SetPrefix(ctx context.Context, guildID, prefix string) error
+	Close(ctx context.Context)
+}
 
 // Bot is the central struct that holds all runtime state.
 // There are ZERO package-level mutable variables — everything lives here.
@@ -22,13 +28,7 @@ type Bot struct {
 	BotID     string
 	startTime time.Time
 
-	blackjackGames sync.Map
-	wordleGames    sync.Map
-	triviaActive   sync.Map
-	rateLimits     sync.Map
-
-	fontFace48 font.Face
-	fontFace32 font.Face
+	rateLimits sync.Map
 }
 
 // NewBot constructs a Bot with its injected dependencies.
@@ -51,8 +51,6 @@ var slashCommands = []*discordgo.ApplicationCommand{
 func (b *Bot) Start() error {
 	b.startTime = time.Now()
 
-	b.initFonts()
-
 	var err error
 	b.goBot, err = discordgo.New("Bot " + b.cfg.Token)
 	if err != nil {
@@ -69,20 +67,16 @@ func (b *Bot) Start() error {
 	b.goBot.Identify.Intents = discordgo.IntentsGuildMessages |
 		discordgo.IntentsDirectMessages |
 		discordgo.IntentsMessageContent |
-		discordgo.IntentsGuildMembers |
 		discordgo.IntentsGuilds
 
 	b.goBot.StateEnabled = false
 
 	b.goBot.AddHandler(b.messageHandler)
 	b.goBot.AddHandler(b.slashCommandHandler)
-	b.goBot.AddHandler(b.welcomeHandler)
 
 	if err := b.goBot.Open(); err != nil {
 		return fmt.Errorf("opening discord connection: %w", err)
 	}
-
-	b.LoadReminders(b.goBot)
 
 	_ = b.goBot.UpdateListeningStatus(b.cfg.BotPrefix + "ping")
 
@@ -104,3 +98,4 @@ func (b *Bot) Stop() {
 	}
 	b.store.Close(context.Background())
 }
+

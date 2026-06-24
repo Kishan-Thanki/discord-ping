@@ -23,7 +23,7 @@ func main() {
 		return
 	}
 
-	slog.Info("Starting go-discord-ping", "version", config.Version)
+	slog.Info("Starting discord-ping", "version", config.Version)
 
 	repo, err := database.NewRepository("bot.db")
 	if err != nil {
