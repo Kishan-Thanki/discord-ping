@@ -98,4 +98,3 @@ func (b *Bot) Stop() {
 	}
 	b.store.Close(context.Background())
 }
-

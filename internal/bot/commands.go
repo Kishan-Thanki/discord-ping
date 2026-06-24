@@ -29,35 +29,35 @@ func (b *Bot) cmdPing(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if err != nil {
 		return
 	}
-	
+
 	// Calculate API Round Trip
 	apiLatency := time.Since(start).Milliseconds()
-	
+
 	// Get WebSocket Heartbeat Latency
 	heartbeat := s.HeartbeatLatency().Milliseconds()
-	
+
 	// Message transit time
 	messageTransit := time.Since(m.Timestamp).Milliseconds()
 
 	embed.Description = ""
 	embed.Fields = []*discordgo.MessageEmbedField{
 		{
-			Name: "🌐 WebSocket Heartbeat",
-			Value: "**" + strconv.FormatInt(heartbeat, 10) + "ms**\n*(Connection to Discord Gateway)*",
+			Name:   "🌐 WebSocket Heartbeat",
+			Value:  "**" + strconv.FormatInt(heartbeat, 10) + "ms**\n*(Connection to Discord Gateway)*",
 			Inline: false,
 		},
 		{
-			Name: "⚡ API Round-Trip",
-			Value: "**" + strconv.FormatInt(apiLatency, 10) + "ms**\n*(Time to send and receive message)*",
+			Name:   "⚡ API Round-Trip",
+			Value:  "**" + strconv.FormatInt(apiLatency, 10) + "ms**\n*(Time to send and receive message)*",
 			Inline: false,
 		},
 		{
-			Name: "📨 Message Transit",
-			Value: "**" + strconv.FormatInt(messageTransit, 10) + "ms**\n*(Time since user sent command)*",
+			Name:   "📨 Message Transit",
+			Value:  "**" + strconv.FormatInt(messageTransit, 10) + "ms**\n*(Time since user sent command)*",
 			Inline: false,
 		},
 	}
-	
+
 	EditEmbed(s, m.ChannelID, msg.ID, embed)
 }
 
