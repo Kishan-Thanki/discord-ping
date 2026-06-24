@@ -1,18 +1,18 @@
-= go-discord-ping
+# discord-ping
 
-image:https://github.com/Kishan-Thanki/discord-ping/actions/workflows/ci.yml/badge.svg[Build Status,link=https://github.com/Kishan-Thanki/discord-ping/actions]
-image:https://goreportcard.com/badge/github.com/Kishan-Thanki/discord-ping[Go Report Card,link=https://goreportcard.com/report/github.com/Kishan-Thanki/discord-ping]
-image:https://img.shields.io/badge/License-MIT-yellow.svg[License: MIT,link=https://opensource.org/licenses/MIT]
+[![Build Status](https://github.com/Kishan-Thanki/discord-ping/actions/workflows/ci.yml/badge.svg)](https://github.com/Kishan-Thanki/discord-ping/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Kishan-Thanki/discord-ping)](https://goreportcard.com/report/github.com/Kishan-Thanki/discord-ping)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A high-performance, zero-allocation Discord utility bot built in Go. Features native image rendering, auto-moderation, leveling, a virtual economy, and lightning-fast SQLite prepared statements.
 
-== Project Philosophy: Production-Ready Learning
+## Project Philosophy: Production-Ready Learning
 
 NOTE: This repository is fundamentally an *Exploration and Learning Project* engineered to strict production-ready standards. It was built to demonstrate high-performance Go patterns, zero-allocation memory management, and advanced concurrency. +
  +
 If you find flaws, want to fix bugs, or simply want to learn how these complex systems interact, you are highly encouraged to explore the codebase, open issues, and submit pull requests. Please consider this a living, educational repository for building production-grade Discord applications!
 
-== Features
+## Features
 
 * *Zero-Allocation Core*: Extensively optimized using `strconv` and `strings.Builder` to bypass `fmt` reflection overhead, ensuring near-zero garbage collection pauses.
 * *SQLite Database*: Uses a local, high-performance WAL-mode SQLite database with prepared statements to track users, economies, and warnings per server.
@@ -21,7 +21,7 @@ If you find flaws, want to fix bugs, or simply want to learn how these complex s
 * *Native Image Rendering*: Generates beautiful custom welcome images on-the-fly using `fogleman/gg` whenever a new user joins a server.
 * *Auto-Moderation*: Includes spam/bad-word filters and a strict 3-strike warning system (`!warn`) that automatically timeouts repeat offenders.
 
-== External Dependencies
+## External Dependencies
 
 This project relies on the following external libraries:
 
@@ -31,14 +31,14 @@ This project relies on the following external libraries:
 
 
 
-== Usage
+## Usage
 
-For a complete list of all available commands, games, and moderation tools, please refer to the link:COMMANDS.adoc[Commands Guide].
+For a complete list of all available commands, games, and moderation tools, please refer to the [Commands Guide](COMMANDS.md).
 
-== Policies
+## Policies
 
-Please review our link:PRIVACY_POLICY.adoc[Privacy Policy] and link:TERMS_OF_SERVICE.adoc[Terms of Service] regarding data collection and moderation actions.
+Please review our [Privacy Policy](PRIVACY_POLICY.md) and [Terms of Service](TERMS_OF_SERVICE.md) regarding data collection and moderation actions.
 
-== License
+## License
 
 This project is licensed under the https://opensource.org/licenses/MIT[MIT License].

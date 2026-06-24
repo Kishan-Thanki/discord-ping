@@ -1,10 +1,10 @@
-= Ping-Bot Commands Guide
+# Ping-Bot Commands Guide
 
 Welcome to the official command guide for Ping-Bot!
 
 By default, the bot listens for the `!` prefix (unless you changed `BOT_PREFIX` in your `.env` file). Here is a complete list of everything the bot can do.
 
-== General & Utility
+## General & Utility
 
 * *`!ping`* +
   Tests the bot's connection. The bot will instantly reply with a "pong" and the exact websocket latency in milliseconds.
@@ -23,7 +23,7 @@ By default, the bot listens for the `!` prefix (unless you changed `BOT_PREFIX` 
   _Example:_ `!remind 10m Check the oven` +
   _Example:_ `!remind 2h Finish homework`
 
-== Economy & Leveling
+## Economy & Leveling
 
 * *`!daily`* +
   Claims your daily allowance of 100 free coins. Can be used once every 24 hours.
@@ -37,7 +37,7 @@ By default, the bot listens for the `!` prefix (unless you changed `BOT_PREFIX` 
 * *`!rank`* +
   Displays your current level, total XP, and progress. (You earn XP automatically by sending messages).
 
-== Games & Gambling
+## Games & Gambling
 
 * *`!coinflip`* +
   Flips a coin — heads or tails. Pure 50/50 chance.
@@ -64,7 +64,7 @@ By default, the bot listens for the `!` prefix (unless you changed `BOT_PREFIX` 
   Creates an interactive poll with emoji reactions. Max 10 options. +
   _Example:_ `!poll "Best language?" "Go" "Rust" "Python"`
 
-== Moderation
+## Moderation
 
 _(Note: These commands require the user to have the relevant moderation permissions in the server)._
 
@@ -83,7 +83,7 @@ _(Note: These commands require the user to have the relevant moderation permissi
   Changes the bot's command prefix for this server. Requires **Administrator** permission. +
   _Example:_ `!setprefix ?` (commands now use `?ping`, `?help`, etc.)
 
-== Passive Features
+## Passive Features
 
 You don't need to type commands for these to work:
 

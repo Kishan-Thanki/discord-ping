@@ -1,10 +1,10 @@
-= Privacy Policy for Ping-Bot
+# Privacy Policy for Ping-Bot
 
 _Last Updated: May 2026_
 
 This Privacy Policy explains what data Ping-Bot ("the Bot") collects, how it is used, and how it is protected.
 
-== 1. Data We Collect
+## 1. Data We Collect
 
 To provide its functionality, the Bot stores the following data in its local database:
 
@@ -13,12 +13,12 @@ To provide its functionality, the Bot stores the following data in its local dat
 * *Discord Channel IDs*: Used exclusively for scheduling and delivering reminders (`!remind`).
 * *Command Text Snippets*: The explicit text you provide when creating a reminder (`!remind`) or issuing a warning (`!warn`) is stored in the database to deliver the feature.
 
-== 2. Data We DO NOT Collect
+## 2. Data We DO NOT Collect
 
 * *Message Content*: The Bot does NOT mass-log or save the content of your general chat messages. It only reads messages in real-time in memory to check for commands or auto-mod triggers, after which the text is immediately discarded. _(Exception: Text explicitly provided as the message of a `!remind` or `!warn` command is saved to the database)._
 * *Personal Identifiable Information (PII)*: We do not ask for, collect, or store real names, email addresses, passwords, or IP addresses.
 
-== 3. How Data is Used
+## 3. How Data is Used
 
 The data we collect is used strictly for the operation of the Bot's features:
 
@@ -26,10 +26,10 @@ The data we collect is used strictly for the operation of the Bot's features:
 * Issuing automated moderation actions (tracking warnings).
 * Executing scheduled reminders.
 
-== 4. Data Sharing
+## 4. Data Sharing
 
 We do not sell, trade, or share your data with any third parties. Your data remains strictly within the secure SQLite database hosted by the bot administrator.
 
-== 5. Data Deletion
+## 5. Data Deletion
 
 If you wish to have your data (XP, balance, warnings, reminders) removed from our database, please contact the bot developer or kick the bot from your server. We may periodically purge data for inactive users or servers.
