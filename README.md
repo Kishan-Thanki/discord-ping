@@ -7,20 +7,21 @@ A high-performance, lightweight Discord diagnostic and utility bot built in Go. 
 
 ## Project Philosophy: Production-Ready Diagnostics
 
-NOTE: This repository is fundamentally an *Exploration and Learning Project* engineered to strict production-ready standards. It was built to demonstrate high-performance Go patterns and zero-allocation memory management.
+NOTE: This repository is fundamentally an _Exploration and Learning Project_ engineered to strict production-ready standards. It was built to demonstrate high-performance Go patterns and zero-allocation memory management.
 
 ## Features
 
-* *Zero-Allocation Core*: Extensively optimized using `strconv` and `strings.Builder` to bypass `fmt` reflection overhead, ensuring near-zero garbage collection pauses.
-* *Precise Diagnostics*: Instantly calculates Discord API round-trip latency, WebSocket heartbeat, and message transit times.
-* *Lightweight Design*: Stripped down to the bare essentials, ensuring instant startup times and minimal memory footprint.
+- _Zero-Allocation Core_: Extensively optimized using `strconv` and `strings.Builder` to bypass `fmt` reflection overhead, ensuring near-zero garbage collection pauses.
+- _Precise Diagnostics_: Instantly calculates Discord API round-trip latency, WebSocket heartbeat, and message transit times.
+- _Lightweight Design_: Stripped down to the bare essentials, ensuring instant startup times and minimal memory footprint.
 
 ## External Dependencies
 
 This project relies on the following external libraries:
 
-. https://github.com/bwmarrin/discordgo[*DiscordGo*]: Handles the complex WebSocket connections to Discord's gateway and provides bindings for the Discord REST API.
-. https://gitlab.com/cznic/sqlite[*modernc.org/sqlite*]: A CGo-free SQLite driver used for storing server-specific configurations (like custom prefixes).
+- [DiscordGo](https://github.com/bwmarrin/discordgo): Handles the complex WebSocket connections to Discord's gateway and provides bindings for the Discord REST API.
+
+- [modernc.org/sqlite](https://gitlab.com/cznic/sqlite): A CGo-free SQLite driver used for storing server-specific configurations (like custom prefixes).
 
 ## Usage
 
@@ -32,4 +33,4 @@ Please review our [Privacy Policy](PRIVACY_POLICY.md) and [Terms of Service](TER
 
 ## License
 
-This project is licensed under the https://opensource.org/licenses/MIT[MIT License].
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
