@@ -1,39 +1,30 @@
 # discord-ping
 
 [![Build Status](https://github.com/Kishan-Thanki/discord-ping/actions/workflows/ci.yml/badge.svg)](https://github.com/Kishan-Thanki/discord-ping/actions)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Kishan-Thanki/discord-ping)](https://goreportcard.com/report/github.com/Kishan-Thanki/discord-ping)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A high-performance, zero-allocation Discord utility bot built in Go. Features native image rendering, auto-moderation, leveling, a virtual economy, and lightning-fast SQLite prepared statements.
+A high-performance, lightweight Discord diagnostic and utility bot built in Go. Engineered to strictly measure WebSocket heartbeat and API round-trip latencies with near-zero overhead.
 
-## Project Philosophy: Production-Ready Learning
+## Project Philosophy: Production-Ready Diagnostics
 
-NOTE: This repository is fundamentally an *Exploration and Learning Project* engineered to strict production-ready standards. It was built to demonstrate high-performance Go patterns, zero-allocation memory management, and advanced concurrency. +
- +
-If you find flaws, want to fix bugs, or simply want to learn how these complex systems interact, you are highly encouraged to explore the codebase, open issues, and submit pull requests. Please consider this a living, educational repository for building production-grade Discord applications!
+NOTE: This repository is fundamentally an *Exploration and Learning Project* engineered to strict production-ready standards. It was built to demonstrate high-performance Go patterns and zero-allocation memory management.
 
 ## Features
 
 * *Zero-Allocation Core*: Extensively optimized using `strconv` and `strings.Builder` to bypass `fmt` reflection overhead, ensuring near-zero garbage collection pauses.
-* *SQLite Database*: Uses a local, high-performance WAL-mode SQLite database with prepared statements to track users, economies, and warnings per server.
-* *Virtual Economy & Leveling*: Users earn XP and Coins by participating in chat. Features include `!daily`, `!balance`, `!leaderboard`, `!rank`, `!coinflip`, and `!blackjack`.
-* *Mini-Games*: Play fully interactive games like `!wordle` and trivia right in Discord. Safe for high-concurrency environments using `sync.Mutex` locks.
-* *Native Image Rendering*: Generates beautiful custom welcome images on-the-fly using `fogleman/gg` whenever a new user joins a server.
-* *Auto-Moderation*: Includes spam/bad-word filters and a strict 3-strike warning system (`!warn`) that automatically timeouts repeat offenders.
+* *Precise Diagnostics*: Instantly calculates Discord API round-trip latency, WebSocket heartbeat, and message transit times.
+* *Lightweight Design*: Stripped down to the bare essentials, ensuring instant startup times and minimal memory footprint.
 
 ## External Dependencies
 
 This project relies on the following external libraries:
 
 . https://github.com/bwmarrin/discordgo[*DiscordGo*]: Handles the complex WebSocket connections to Discord's gateway and provides bindings for the Discord REST API.
-. https://gitlab.com/cznic/sqlite[*modernc.org/sqlite*]: A CGo-free SQLite driver for Go, ensuring lightning-fast local data storage without requiring a C compiler.
-. https://github.com/fogleman/gg[*fogleman/gg*]: A 2D rendering library in Go used to draw the custom welcome images.
-
-
+. https://gitlab.com/cznic/sqlite[*modernc.org/sqlite*]: A CGo-free SQLite driver used for storing server-specific configurations (like custom prefixes).
 
 ## Usage
 
-For a complete list of all available commands, games, and moderation tools, please refer to the [Commands Guide](COMMANDS.md).
+For a complete list of all available commands, please refer to the [Commands Guide](COMMANDS.md).
 
 ## Policies
 
