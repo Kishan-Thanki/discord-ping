@@ -12,8 +12,6 @@ By default, the bot listens for the `!` prefix (unless you changed `BOT_PREFIX` 
   Displays a brief in-game help menu.
 * *`!version`* (or `!about`) +
   Shows the bot's current version and description.
-* *`!uptime`* +
-  Shows how long the bot has been running since its last restart.
 
 ## Configuration
 

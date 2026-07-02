@@ -8,16 +8,11 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-// Repository encapsulates all database access.
-// Every piece of state — the connection AND the prepared statements — lives on this struct.
-// There are ZERO package-level variables.
 type Repository struct {
 	db *sql.DB
 	configRepo
 }
 
-// NewRepository opens a SQLite database, applies performance pragmas,
-// creates tables, and prepares all statements.
 func NewRepository(dataSourceName string) (*Repository, error) {
 	db, err := sql.Open("sqlite", dataSourceName)
 	if err != nil {
@@ -36,6 +31,7 @@ func NewRepository(dataSourceName string) (*Repository, error) {
 	}
 	for _, p := range pragmas {
 		if _, err := db.ExecContext(context.Background(), p); err != nil {
+			db.Close()
 			return nil, err
 		}
 	}
@@ -43,9 +39,11 @@ func NewRepository(dataSourceName string) (*Repository, error) {
 	r := &Repository{db: db}
 
 	if err := r.createTables(context.Background()); err != nil {
+		db.Close()
 		return nil, err
 	}
 	if err := r.configRepo.prepare(db); err != nil {
+		db.Close()
 		return nil, err
 	}
 
@@ -53,7 +51,6 @@ func NewRepository(dataSourceName string) (*Repository, error) {
 	return r, nil
 }
 
-// Close releases all prepared statements and closes the database connection.
 func (r *Repository) Close(_ context.Context) {
 	stmts := []*sql.Stmt{
 		r.stmtGetPrefix, r.stmtSetPrefix,

@@ -5,10 +5,11 @@ import (
 	"time"
 
 	"discord-ping/internal/config"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-const embedColor = 0x5865F2 // Discord Blurple
+const embedColor = 0x5865F2
 
 func newEmbed(title, description string) *discordgo.MessageEmbed {
 	return &discordgo.MessageEmbed{
@@ -16,66 +17,50 @@ func newEmbed(title, description string) *discordgo.MessageEmbed {
 		Description: description,
 		Color:       embedColor,
 		Footer: &discordgo.MessageEmbedFooter{
-			Text: "discord-ping | High-Performance Diagnostics",
+			Text: "discord-ping",
 		},
 		Timestamp: time.Now().Format(time.RFC3339),
 	}
 }
 
-func (b *Bot) cmdPing(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (b *Bot) cmdPing(s *discordgo.Session, ctx PingContext) {
 	start := time.Now()
 	embed := newEmbed("🏓 Ping Metrics", "Measuring latency...")
-	msg, err := s.ChannelMessageSendEmbed(m.ChannelID, embed)
-	if err != nil {
+	if err := ctx.Respond(embed); err != nil {
 		return
 	}
 
-	// Calculate API Round Trip
 	apiLatency := time.Since(start).Milliseconds()
-
-	// Get WebSocket Heartbeat Latency
 	heartbeat := s.HeartbeatLatency().Milliseconds()
+	transitTime := time.Since(ctx.SentAt()).Milliseconds()
 
-	// Message transit time
-	messageTransit := time.Since(m.Timestamp).Milliseconds()
-
+	embed.Title = "🏓 Pong! **" + strconv.FormatInt(heartbeat, 10) + "ms**"
 	embed.Description = ""
 	embed.Fields = []*discordgo.MessageEmbedField{
 		{
-			Name:   "🌐 WebSocket Heartbeat",
-			Value:  "**" + strconv.FormatInt(heartbeat, 10) + "ms**\n*(Connection to Discord Gateway)*",
-			Inline: false,
+			Name:   "🌐 WebSocket",
+			Value:  "*" + strconv.FormatInt(heartbeat, 10) + "ms*",
+			Inline: true,
 		},
 		{
 			Name:   "⚡ API Round-Trip",
-			Value:  "**" + strconv.FormatInt(apiLatency, 10) + "ms**\n*(Time to send and receive message)*",
-			Inline: false,
+			Value:  "*" + strconv.FormatInt(apiLatency, 10) + "ms*",
+			Inline: true,
 		},
 		{
-			Name:   "📨 Message Transit",
-			Value:  "**" + strconv.FormatInt(messageTransit, 10) + "ms**\n*(Time since user sent command)*",
-			Inline: false,
+			Name:   "📨 Transit",
+			Value:  "*" + strconv.FormatInt(transitTime, 10) + "ms*",
+			Inline: true,
 		},
 	}
 
-	EditEmbed(s, m.ChannelID, msg.ID, embed)
+	_ = ctx.Respond(embed)
 }
 
 func (b *Bot) cmdVersion(s *discordgo.Session, m *discordgo.MessageCreate) {
-	embed := newEmbed("ℹ️ About", "discord-ping is a hyper-optimized Discord diagnostic bot built in Go.")
+	embed := newEmbed("ℹ️ About", "discord-ping is a diagnostic bot built in Go.")
 	embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
 		Name: "Version", Value: "`" + config.Version + "`", Inline: true,
 	})
-	SendEmbed(s, m.ChannelID, embed)
-}
-
-func (b *Bot) cmdUptime(s *discordgo.Session, m *discordgo.MessageCreate) {
-	uptime := time.Since(b.startTime)
-
-	hours := int(uptime.Hours())
-	minutes := int(uptime.Minutes()) % 60
-	seconds := int(uptime.Seconds()) % 60
-
-	embed := newEmbed("⏱️ Uptime", "Online and monitoring for **"+strconv.Itoa(hours)+"h "+strconv.Itoa(minutes)+"m "+strconv.Itoa(seconds)+"s**")
 	SendEmbed(s, m.ChannelID, embed)
 }

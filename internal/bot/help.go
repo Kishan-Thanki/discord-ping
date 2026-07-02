@@ -8,10 +8,10 @@ import (
 )
 
 func (b *Bot) cmdHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
-	prefix := "!"
+	prefix := b.cfg.BotPrefix
 	if m.GuildID != "" {
 		p, err := b.store.GetPrefix(context.Background(), m.GuildID)
-		if err == nil {
+		if err == nil && p != "" {
 			prefix = p
 		}
 	}
@@ -22,7 +22,7 @@ func (b *Bot) cmdHelp(s *discordgo.Session, m *discordgo.MessageCreate) {
 		Name string
 		Cmds []string
 	}{
-		{"Diagnostics", []string{"ping", "version", "uptime"}},
+		{"Diagnostics", []string{"ping", "about"}},
 		{"Utility", []string{"help"}},
 		{"Admin", []string{"setprefix [new]"}},
 	}
@@ -56,7 +56,14 @@ func (b *Bot) cmdSetPrefix(s *discordgo.Session, m *discordgo.MessageCreate, arg
 	}
 
 	if len(args) < 2 {
-		embed := newEmbed("❌ Usage", "Usage: `!setprefix [new_prefix]`")
+		prefix := b.cfg.BotPrefix
+		if m.GuildID != "" {
+			p, err := b.store.GetPrefix(context.Background(), m.GuildID)
+			if err == nil && p != "" {
+				prefix = p
+			}
+		}
+		embed := newEmbed("❌ Usage", "Usage: `"+prefix+"setprefix [new_prefix]`")
 		SendEmbed(s, m.ChannelID, embed)
 		return
 	}

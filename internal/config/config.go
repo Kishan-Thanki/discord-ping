@@ -8,8 +8,6 @@ import (
 
 const Version = "v1.1.0"
 
-// Config represents the single source of truth for the bot's environment.
-// Explicitly define every configuration value the bot needs here.
 type Config struct {
 	Token     string
 	BotPrefix string

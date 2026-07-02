@@ -5,37 +5,32 @@ import (
 	"fmt"
 	"log/slog"
 	"sync"
-	"time"
 
 	"discord-ping/internal/config"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-// Store defines the data layer interface required by the bot.
 type Store interface {
 	GetPrefix(ctx context.Context, guildID string) (string, error)
 	SetPrefix(ctx context.Context, guildID, prefix string) error
 	Close(ctx context.Context)
 }
 
-// Bot is the central struct that holds all runtime state.
-// There are ZERO package-level mutable variables — everything lives here.
 type Bot struct {
-	cfg       *config.Config
-	store     Store
-	goBot     *discordgo.Session
-	BotID     string
-	startTime time.Time
-
-	rateLimits sync.Map
+	cfg         *config.Config
+	store       Store
+	goBot       *discordgo.Session
+	BotID       string
+	rateLimits  sync.Map
+	stopCleanup chan struct{}
 }
 
-// NewBot constructs a Bot with its injected dependencies.
 func NewBot(cfg *config.Config, store Store) *Bot {
 	return &Bot{
-		cfg:   cfg,
-		store: store,
+		cfg:         cfg,
+		store:       store,
+		stopCleanup: make(chan struct{}),
 	}
 }
 
@@ -46,11 +41,7 @@ var slashCommands = []*discordgo.ApplicationCommand{
 	},
 }
 
-// Start initializes the Discord session and connects to the gateway.
-// It returns an error if any critical step fails — the caller decides what to do.
 func (b *Bot) Start() error {
-	b.startTime = time.Now()
-
 	var err error
 	b.goBot, err = discordgo.New("Bot " + b.cfg.Token)
 	if err != nil {
@@ -81,17 +72,19 @@ func (b *Bot) Start() error {
 	_ = b.goBot.UpdateListeningStatus(b.cfg.BotPrefix + "ping")
 
 	for _, cmd := range slashCommands {
-		if _, err := b.goBot.ApplicationCommandCreate(b.goBot.State.User.ID, "", cmd); err != nil {
+		if _, err := b.goBot.ApplicationCommandCreate(b.BotID, "", cmd); err != nil {
 			slog.Error("Failed to register slash command", "command", cmd.Name, "error", err)
 		}
 	}
+
+	go b.startRateLimitCleaner()
 
 	slog.Info("Bot is running", "user", u.Username, "id", u.ID)
 	return nil
 }
 
-// Stop gracefully shuts down the bot and closes the database.
 func (b *Bot) Stop() {
+	close(b.stopCleanup)
 	if b.goBot != nil {
 		slog.Info("Shutting down bot gracefully")
 		b.goBot.Close()

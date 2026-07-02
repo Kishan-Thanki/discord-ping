@@ -3,7 +3,6 @@ package bot
 import (
 	"context"
 	"log/slog"
-	"strconv"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -42,11 +41,9 @@ func (b *Bot) messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		switch strings.ToLower(args[0]) {
 		case "ping":
-			b.cmdPing(s, m)
+			b.cmdPing(s, &MessageContext{Session: s, Message: m})
 		case "version", "about":
 			b.cmdVersion(s, m)
-		case "uptime":
-			b.cmdUptime(s, m)
 		case "help":
 			b.cmdHelp(s, m)
 		case "setprefix":
@@ -64,18 +61,6 @@ func (b *Bot) slashCommandHandler(s *discordgo.Session, i *discordgo.Interaction
 
 	switch i.ApplicationCommandData().Name {
 	case "ping":
-		// Quick response for slash command since we don't have message timing
-		latency := s.HeartbeatLatency().Milliseconds()
-		embed := newEmbed("🏓 Ping Metrics", "WebSocket Heartbeat: **"+strconv.FormatInt(latency, 10)+"ms**")
-
-		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Embeds: []*discordgo.MessageEmbed{embed},
-			},
-		})
-		if err != nil {
-			slog.Error("Failed to respond to slash command", "error", err)
-		}
+		b.cmdPing(s, &InteractionContext{Session: s, Interaction: i})
 	}
 }

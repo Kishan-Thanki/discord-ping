@@ -26,3 +26,24 @@ func (b *Bot) isRateLimited(s *discordgo.Session, m *discordgo.MessageCreate) bo
 	b.rateLimits.Store(m.Author.ID, time.Now())
 	return false
 }
+
+func (b *Bot) startRateLimitCleaner() {
+	ticker := time.NewTicker(1 * time.Minute)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-b.stopCleanup:
+			return
+		case <-ticker.C:
+			now := time.Now()
+			b.rateLimits.Range(func(key, val interface{}) bool {
+				lastCmd, ok := val.(time.Time)
+				if !ok || now.Sub(lastCmd) > rateLimitDuration {
+					b.rateLimits.Delete(key)
+				}
+				return true
+			})
+		}
+	}
+}
