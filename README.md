@@ -5,6 +5,8 @@
 
 A high-performance, lightweight Discord diagnostic and utility bot built in Go. Engineered to strictly measure WebSocket heartbeat and API round-trip latencies with near-zero overhead.
 
+<video src="discord-bot-demo.mp4" loop muted autoplay controls width="600"></video>
+
 ## Project Philosophy: Production-Ready Diagnostics
 
 NOTE: This repository is fundamentally an _Exploration and Learning Project_ engineered to strict production-ready standards. It was built to demonstrate high-performance Go patterns and zero-allocation memory management.
