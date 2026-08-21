@@ -29,55 +29,62 @@ func NewRepository(dataSourceName string) (*Repository, error) {
 		"PRAGMA temp_store = MEMORY;",
 		"PRAGMA cache_size = -16000;",
 	}
-	for _, p := range pragmas {
-		if _, err := db.ExecContext(context.Background(), p); err != nil {
-			db.Close()
+
+	for _, pragma := range pragmas {
+		if _, err := db.ExecContext(context.Background(), pragma); err != nil {
+			_ = db.Close()
 			return nil, err
 		}
 	}
 
-	r := &Repository{db: db}
+	repo := &Repository{db: db}
 
-	if err := r.createTables(context.Background()); err != nil {
-		db.Close()
-		return nil, err
-	}
-	if err := r.configRepo.prepare(db); err != nil {
-		db.Close()
+	if err := repo.createTables(context.Background()); err != nil {
+		_ = db.Close()
 		return nil, err
 	}
 
-	slog.Info("Database initialized successfully with WAL & Prepared Statements")
-	return r, nil
+	if err := repo.configRepo.prepare(db); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+
+	slog.Info("database initialized successfully")
+
+	return repo, nil
 }
 
 func (r *Repository) Close(_ context.Context) {
-	stmts := []*sql.Stmt{
-		r.stmtGetPrefix, r.stmtSetPrefix,
+	if r == nil {
+		return
 	}
-	for _, s := range stmts {
-		if s != nil {
-			s.Close()
+
+	stmts := []*sql.Stmt{
+		r.stmtGetPrefix,
+		r.stmtSetPrefix,
+	}
+
+	for _, stmt := range stmts {
+		if stmt != nil {
+			_ = stmt.Close()
 		}
 	}
+
 	if r.db != nil {
-		slog.Info("Closing database connection")
-		r.db.Close()
+		slog.Info("closing database connection")
+		_ = r.db.Close()
+		r.db = nil
 	}
 }
 
 func (r *Repository) createTables(ctx context.Context) error {
-	queries := []string{
-		`CREATE TABLE IF NOT EXISTS server_config (
-			guild_id        TEXT PRIMARY KEY,
-			prefix          TEXT DEFAULT '!'
-		);`,
-	}
+	const query = `
+		CREATE TABLE IF NOT EXISTS server_config (
+			guild_id TEXT PRIMARY KEY,
+			prefix   TEXT NOT NULL DEFAULT '!'
+		);
+	`
 
-	for _, q := range queries {
-		if _, err := r.db.ExecContext(ctx, q); err != nil {
-			return err
-		}
-	}
-	return nil
+	_, err := r.db.ExecContext(ctx, query)
+	return err
 }

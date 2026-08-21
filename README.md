@@ -27,11 +27,25 @@ This project relies on the following external libraries:
 
 ## Usage
 
-For a complete list of all available commands, please refer to the [Commands Guide](COMMANDS.md).
+By default, the bot listens for the `!` prefix, unless you change `BOT_PREFIX` in your `.env` file or use the `!setprefix` command.
 
-## Policies
+### General & Utility
 
-Please review our [Privacy Policy](PRIVACY_POLICY.md) and [Terms of Service](TERMS_OF_SERVICE.md) regarding data collection and moderation actions.
+- `!ping`
+	Tests the bot's connection and reports WebSocket heartbeat latency, API round-trip time, and message transit time in milliseconds.
+- `!help`
+	Displays a brief in-game help menu.
+- `!version` or `!about`
+	Shows the bot's current version and description.
+
+### Configuration
+
+These commands require the relevant moderation permissions in the server.
+
+- `!setprefix <new_prefix>`
+	Changes the bot's command prefix for the current server. Requires **Administrator** permission.
+
+	Example: `!setprefix ?` changes the prefix so commands use `?ping`, `?help`, and so on.
 
 ## License
 

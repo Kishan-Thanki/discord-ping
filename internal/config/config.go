@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
+	"strings"
 )
 
 const Version = "v1.2.0"
@@ -14,17 +14,16 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
-	token := os.Getenv("TOKEN")
+	token := strings.TrimSpace(os.Getenv("TOKEN"))
 	if token == "" {
-		return nil, fmt.Errorf("required environment variable TOKEN is not set")
+		return nil, fmt.Errorf("required environment variable TOKEN is not set or empty")
 	}
 
-	prefix := os.Getenv("BOT_PREFIX")
+	prefix := strings.TrimSpace(os.Getenv("BOT_PREFIX"))
 	if prefix == "" {
-		return nil, fmt.Errorf("required environment variable BOT_PREFIX is not set")
+		return nil, fmt.Errorf("required environment variable BOT_PREFIX is not set or empty")
 	}
 
-	slog.Info("Config loaded successfully")
 	return &Config{
 		Token:     token,
 		BotPrefix: prefix,

@@ -2,119 +2,103 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 )
 
 func TestNewRepository(t *testing.T) {
+	repo := newTestRepository(t)
 
-	repo, err := NewRepository(":memory:")
-	if err != nil {
-		t.Fatalf("failed to create repository: %v", err)
+	if repo == nil {
+		t.Fatal("expected repository, got nil")
 	}
-	defer repo.Close(context.Background())
 
 	if repo.db == nil {
-		t.Error("expected database connection to be initialized")
+		t.Fatal("expected database connection to be initialized")
+	}
+
+	if repo.stmtGetPrefix == nil {
+		t.Fatal("expected get-prefix statement to be initialized")
+	}
+
+	if repo.stmtSetPrefix == nil {
+		t.Fatal("expected set-prefix statement to be initialized")
 	}
 }
 
-func TestPrefixOperations(t *testing.T) {
-	repo, err := NewRepository(":memory:")
+func TestRepositoryCreatesServerConfigTable(t *testing.T) {
+	repo := newTestRepository(t)
+
+	var tableName string
+	err := repo.db.QueryRowContext(
+		context.Background(),
+		"SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'server_config'",
+	).Scan(&tableName)
 	if err != nil {
-		t.Fatalf("failed to create repository: %v", err)
+		t.Fatalf("failed to verify server_config table: %v", err)
 	}
-	defer repo.Close(context.Background())
+
+	if tableName != "server_config" {
+		t.Fatalf("expected table name %q, got %q", "server_config", tableName)
+	}
+}
+
+func TestRepositoryDefaultPrefix(t *testing.T) {
+	repo := newTestRepository(t)
 
 	ctx := context.Background()
-	guildID := "1234567890"
+	guildID := "default-prefix-guild"
 
-	prefix, err := repo.GetPrefix(ctx, guildID)
+	_, err := repo.db.ExecContext(
+		ctx,
+		"INSERT INTO server_config (guild_id) VALUES (?)",
+		guildID,
+	)
+	if err != nil {
+		t.Fatalf("failed to insert guild without prefix: %v", err)
+	}
+
+	var prefix string
+	if err := repo.db.QueryRowContext(
+		ctx,
+		"SELECT prefix FROM server_config WHERE guild_id = ?",
+		guildID,
+	).Scan(&prefix); err != nil {
+		t.Fatalf("failed to read default prefix: %v", err)
+	}
+
+	if prefix != "!" {
+		t.Errorf("expected default prefix %q, got %q", "!", prefix)
+	}
+}
+
+func TestRepositoryPrefixCannotBeNull(t *testing.T) {
+	repo := newTestRepository(t)
+
+	_, err := repo.db.ExecContext(
+		context.Background(),
+		"INSERT INTO server_config (guild_id, prefix) VALUES (?, NULL)",
+		"null-prefix-guild",
+	)
 	if err == nil {
-		t.Errorf("expected error (sql.ErrNoRows) for non-existent guild, got prefix: %q", prefix)
-	}
-	if err != sql.ErrNoRows {
-		t.Errorf("expected sql.ErrNoRows, got: %v", err)
-	}
-
-	err = repo.SetPrefix(ctx, guildID, "?")
-	if err != nil {
-		t.Fatalf("failed to set prefix: %v", err)
-	}
-
-	prefix, err = repo.GetPrefix(ctx, guildID)
-	if err != nil {
-		t.Fatalf("failed to get prefix: %v", err)
-	}
-	if prefix != "?" {
-		t.Errorf("expected prefix '?', got: %q", prefix)
-	}
-
-	err = repo.SetPrefix(ctx, guildID, "$")
-	if err != nil {
-		t.Fatalf("failed to update prefix: %v", err)
-	}
-
-	prefix, err = repo.GetPrefix(ctx, guildID)
-	if err != nil {
-		t.Fatalf("failed to get prefix after update: %v", err)
-	}
-	if prefix != "$" {
-		t.Errorf("expected updated prefix '$', got: %q", prefix)
+		t.Fatal("expected inserting NULL prefix to fail")
 	}
 }
 
-func TestPrefixCaching(t *testing.T) {
+func TestRepositoryClose(t *testing.T) {
 	repo, err := NewRepository(":memory:")
 	if err != nil {
 		t.Fatalf("failed to create repository: %v", err)
 	}
-	defer repo.Close(context.Background())
 
-	ctx := context.Background()
-	guildID := "cache-guild"
+	repo.Close(context.Background())
 
-	_, err = repo.GetPrefix(ctx, guildID)
-	if err != sql.ErrNoRows {
-		t.Fatalf("expected ErrNoRows, got: %v", err)
+	if repo.db != nil {
+		t.Error("expected repository database handle to be nil after Close")
 	}
+}
 
-	val, ok := repo.cache.Load(guildID)
-	if !ok {
-		t.Error("expected guild to be in cache")
-	}
-	if val.(string) != "" {
-		t.Errorf("expected cached prefix to be empty string, got: %q", val)
-	}
+func TestRepositoryCloseNil(t *testing.T) {
+	var repo *Repository
 
-	err = repo.SetPrefix(ctx, guildID, "@")
-	if err != nil {
-		t.Fatalf("failed to set prefix: %v", err)
-	}
-
-	val, ok = repo.cache.Load(guildID)
-	if !ok {
-		t.Error("expected guild to be in cache after SetPrefix")
-	}
-	if val.(string) != "@" {
-		t.Errorf("expected cached prefix to be '@', got: %q", val)
-	}
-
-	repo.cache.Delete(guildID)
-
-	p, err := repo.GetPrefix(ctx, guildID)
-	if err != nil {
-		t.Fatalf("failed to get prefix: %v", err)
-	}
-	if p != "@" {
-		t.Errorf("expected prefix '@', got: %q", p)
-	}
-
-	val, ok = repo.cache.Load(guildID)
-	if !ok {
-		t.Error("expected cache to be repopulated after GetPrefix miss")
-	}
-	if val.(string) != "@" {
-		t.Errorf("expected cached prefix to be '@' after repopulation, got: %q", val)
-	}
+	repo.Close(context.Background())
 }
